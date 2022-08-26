@@ -1,0 +1,43 @@
+/*
+Name: CrestronDevice
+Programmer: Alexey Shvalev
+version: 1.0
+*/
+
+var Crestron = function(driverName) {
+   var that = this;
+   this.driverName = driverName;
+   this.device = IR.GetDevice(driverName);
+   
+   this.getConnectionStatus = function() {
+      return IR.GetVariable("Drivers.Crestron.Online");
+   }
+   
+   this.pulse = function(channel) {
+      //IR.Log("pulse:"+channel);
+      this.device.Set(channel, 1);
+      IR.SetTimeout(10, function() {
+         that.device.Set(channel, 0);
+      });
+   }
+   
+   this.press = function(channel) {
+      this.device.Set(channel, 1);
+   }
+   
+   this.release = function(channel) {
+      this.device.Set(channel, 0);
+   }
+   
+   this.getValue = function(channel) {
+      var value;
+      value = this.device.GetFeedback(channel);
+      return value;
+   }
+   
+   this.setValue = function(channel, value) {
+      //IR.Log("set channel " + channel + " with value " + value);
+      this.device.Set(channel, value);
+   }
+
+}
